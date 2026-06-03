@@ -167,14 +167,14 @@
   .seal .ring.spin{animation:spin 220s linear infinite}
   .seal .ring.spin.rev{animation:spin 280s linear infinite reverse;inset:4%;width:92%;height:92%;opacity:.12}
   .seal .emblem{
-    width:60%;height:60%;border-radius:50%;object-fit:cover;
-    opacity:.13;
-    filter:sepia(.42) saturate(.7) hue-rotate(135deg) brightness(1.15) contrast(1);
+    width:62%;height:62%;border-radius:50%;object-fit:cover;
+    opacity:.42;
+    filter:sepia(.18) saturate(.92) hue-rotate(132deg) brightness(1.08) contrast(1.02);
     mix-blend-mode:soft-light;
   }
   .seal .emblem.glow{
-    position:absolute;width:60%;height:60%;border-radius:50%;
-    box-shadow:0 0 60px 8px rgba(67,168,157,.1);
+    position:absolute;width:62%;height:62%;border-radius:50%;
+    box-shadow:0 0 70px 10px rgba(67,168,157,.16);
   }
 
   /* corner filigree on the map */
@@ -270,7 +270,11 @@
     transition:color .3s ease}
   .cell.has-event:hover .seal-time{color:#fff5d8}
 
-  .cell .ev{margin-top:auto;display:flex;flex-direction:column;gap:.1em;text-align:center;padding-bottom:2px;z-index:2}
+  /* corps flexible : occupe la place sous le numéro, aligne en bas, rogne proprement */
+  .cbody{flex:1 1 auto;min-height:0;width:100%;display:flex;flex-direction:column;
+    justify-content:flex-end;overflow:hidden;z-index:2}
+  .cell.multi .cbody{justify-content:flex-start}   /* liste chrono : 1er live (et son heure) en haut, visible */
+  .cell .ev{display:flex;flex-direction:column;gap:.1em;text-align:center;padding-bottom:2px}
   .ev-avatars{display:flex;justify-content:center;align-items:center;margin:0 auto .3em}
   .ev-avatars .avatar{width:clamp(24px,3.6vmin,40px);height:clamp(24px,3.6vmin,40px);border-radius:50%;
     object-fit:cover;border:1px solid var(--gold-soft);background:#0a262b;
@@ -278,10 +282,35 @@
     transition:border-color .3s ease,transform .3s ease}
   .ev-avatars .avatar+.avatar{margin-left:-11px}
   .cell.has-event:hover .ev-avatars .avatar{border-color:var(--gold-bright);transform:translateY(-1px)}
+
+  /* ---- jour à plusieurs lives (liste compacte) ---- */
+  .ev-list{display:flex;flex-direction:column;width:100%;z-index:2}
+  .ev-item{display:flex;align-items:center;gap:7px;text-align:left;padding:4px 2px;cursor:pointer;
+    border-radius:3px;transition:background .25s ease;min-height:0}
+  .ev-item+.ev-item{border-top:1px solid var(--line-soft)}
+  .ev-item:hover{background:rgba(67,168,157,.16)}
+  .ev-item:focus-visible{outline:none;box-shadow:0 0 0 1px var(--gold-bright) inset}
+  .ev-item .ev-avatars.mini{margin:0;flex:0 0 auto}
+  .ev-avatars.mini .avatar{width:clamp(20px,2.6vmin,30px);height:clamp(20px,2.6vmin,30px);border-width:1px}
+  .ev-avatars.mini .avatar+.avatar{margin-left:-8px}
+  .ev-item .it-body{min-width:0;flex:1 1 auto;display:flex;flex-direction:column;line-height:1.08}
+  .ev-item .it-time{font-family:"Cinzel",serif;font-weight:600;color:var(--gold-bright);
+    font-size:clamp(.58rem,1.15vmin,.8rem);letter-spacing:.04em;text-shadow:0 1px 2px var(--ink-shadow)}
+  .ev-item .it-title{font-family:"Cormorant Garamond",serif;font-weight:700;color:var(--cream);
+    font-size:clamp(.8rem,1.5vmin,1.08rem);line-height:1.1;text-shadow:0 1px 2px var(--ink-shadow);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .ev-item .it-title.tlong{font-size:clamp(.74rem,1.4vmin,.98rem)}
+  .ev-item .it-title.txlong{font-size:clamp(.7rem,1.32vmin,.9rem)}
+  .ev-item .it-host{font-style:italic;color:var(--gold);font-size:clamp(.64rem,1.2vmin,.88rem);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ev-item .it-host::before{content:"— "}
   .cell .ev .title{font-family:"Cormorant Garamond",serif;font-weight:700;
-    font-size:clamp(.98rem,2.15vmin,1.55rem);line-height:1.08;color:var(--cream);
+    font-size:clamp(.98rem,2.15vmin,1.55rem);line-height:1.1;color:var(--cream);
     text-shadow:0 1px 3px var(--ink-shadow);text-wrap:balance;
-    display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  /* le titre rétrécit quand il est long (classes posées par le JS) */
+  .cell .ev .title.tlong{font-size:clamp(.86rem,1.7vmin,1.2rem)}
+  .cell .ev .title.txlong{font-size:clamp(.76rem,1.45vmin,1.02rem);line-height:1.12}
   .cell .ev .title::before{content:"";display:block;width:28px;height:1px;margin:0 auto .3em;
     background:linear-gradient(90deg,transparent,var(--gold),transparent)}
   .cell .ev .host{font-style:italic;font-size:clamp(.76rem,1.5vmin,1.12rem);color:var(--gold);letter-spacing:.02em}
@@ -395,7 +424,10 @@
     .seal-time{position:static;order:2;margin-left:auto;transform:none;width:auto;height:auto;border-radius:14px;
       padding:4px 10px;font-size:.66rem}
     .seal-time::before{display:none}
+    .cell .cbody{display:contents}
     .cell .ev{order:3;flex:1 1 100%;text-align:left;margin:.2em 0 0}
+    .cell .ev .title{-webkit-line-clamp:unset}
+    .cell .ev-list{order:3;flex:1 1 100%;width:100%;margin:.2em 0 0}
     .cell .ev .title::before{margin:0 0 .2em 0}
     .cell .ev .title{-webkit-line-clamp:unset}
     .cell.today .num{margin-right:4px}
@@ -581,6 +613,11 @@
     return [];
   }
   const avatarsHtml=(avs,cls)=>avs.map(a=>`<img class="${cls}" src="${esc(a)}" alt="" loading="lazy">`).join("");
+  const escAttr=s=>esc(s).replace(/"/g,"&quot;");
+  // Un jour peut contenir un seul événement (objet) ou plusieurs (tableau).
+  const dayList=day=>{const v=state.events[day];return v?[].concat(v):[];};
+  // Réduit la taille du titre selon sa longueur (mise en page adaptative).
+  const sizeCls=t=>{const n=(t||"").length;return n>40?"txlong":n>22?"tlong":"";};
 
   // ---------- Compass ticks (décor du sceau) ----------
   (function(){
@@ -616,19 +653,36 @@
       cell.setAttribute("role","gridcell");
       cell.style.animationDelay=(i*14)+"ms";
       if(day<1||day>daysInMonth){cell.classList.add("outside");grid.appendChild(cell);continue;}
-      const ev=state.events[day];
+      const evs=dayList(day);
       let html=`<span class="num" data-dow="${DOW_FULL[dow]}">${day}</span>`;
-      if(ev){
-        cell.classList.add("has-event");cell.dataset.day=day;
+      if(evs.length===0){
+        cell.setAttribute("aria-label",`${day} ${DOW_FULL[dow]} — aucun programme`);
+        html+=`<span class="glyph">${GLYPH_POOL[(day*7+month*3)%GLYPH_POOL.length]}</span>`;
+      }else if(evs.length===1){
+        const ev=evs[0];
+        cell.classList.add("has-event");cell.dataset.day=day;cell.dataset.idx=0;
         cell.tabIndex=0;cell.setAttribute("role","button");
         cell.setAttribute("aria-label",`${day} ${DOW_FULL[dow]} — ${ev.time} — ${ev.title}${ev.host?" ("+ev.host+")":""}. Ouvrir les détails.`);
         const avs=avatarsFor(ev);
         const avBlock=avs.length?`<span class="ev-avatars">${avatarsHtml(avs,"avatar")}</span>`:``;
         html+=`<span class="seal-time">${esc(ev.time)}</span>`;
-        html+=`<span class="ev">${avBlock}<span class="title">${esc(ev.title)}</span>`+(ev.host?`<span class="host">${esc(ev.host)}</span>`:``)+`</span>`;
+        html+=`<div class="cbody"><span class="ev">${avBlock}<span class="title ${sizeCls(ev.title)}">${esc(ev.title)}</span>`+(ev.host?`<span class="host">${esc(ev.host)}</span>`:``)+`</span></div>`;
       }else{
-        cell.setAttribute("aria-label",`${day} ${DOW_FULL[dow]} — aucun programme`);
-        html+=`<span class="glyph">${GLYPH_POOL[(day*7+month*3)%GLYPH_POOL.length]}</span>`;
+        cell.classList.add("has-event","multi");
+        cell.setAttribute("aria-label",`${day} ${DOW_FULL[dow]} — ${evs.length} lives programmés`);
+        let items="";
+        evs.forEach((ev,i)=>{
+          const avs=avatarsFor(ev);
+          const avBlock=avs.length?`<span class="ev-avatars mini">${avatarsHtml(avs,"avatar")}</span>`:``;
+          items+=`<div class="ev-item" role="button" tabindex="0" data-day="${day}" data-idx="${i}"`
+            +` aria-label="${escAttr(ev.time)} — ${escAttr(ev.title)}${ev.host?" ("+escAttr(ev.host)+")":""}. Ouvrir les détails.">`
+            +avBlock
+            +`<span class="it-body"><span class="it-time">${esc(ev.time)}</span>`
+            +`<span class="it-title ${sizeCls(ev.title)}">${esc(ev.title)}</span>`
+            +(ev.host?`<span class="it-host">${esc(ev.host)}</span>`:``)
+            +`</span></div>`;
+        });
+        html+=`<div class="cbody"><span class="ev-list">${items}</span></div>`;
       }
       if(day===todayDay){cell.classList.add("today");html+=`<span class="badge">Aujourd'hui</span>`;}
       cell.innerHTML=html;
@@ -651,8 +705,8 @@
 
   // ---------- Modale ----------
   let lastFocus=null;
-  function openModal(day){
-    const ev=state.events[day];if(!ev)return;
+  function openModal(day,idx){
+    const ev=dayList(day)[Number(idx)||0];if(!ev)return;
     const dow=DOW_FULL[(new Date(state.year,state.month-1,day).getDay()+6)%7];
     document.getElementById("sc-date").textContent=`${dow} ${day} ${state.monthName} ${state.year}`;
     document.getElementById("sc-seal").textContent=ev.time;
@@ -671,9 +725,9 @@
     overlay.classList.add("open");scClose.focus();
   }
   function closeModal(){overlay.classList.remove("open");if(lastFocus)lastFocus.focus();}
-  grid.addEventListener("click",e=>{const c=e.target.closest(".has-event");if(c)openModal(c.dataset.day);});
-  grid.addEventListener("keydown",e=>{const c=e.target.closest(".has-event");
-    if(c&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openModal(c.dataset.day);}});
+  grid.addEventListener("click",e=>{const t=e.target.closest("[data-day]");if(t)openModal(t.dataset.day,t.dataset.idx);});
+  grid.addEventListener("keydown",e=>{const t=e.target.closest("[data-day]");
+    if(t&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openModal(t.dataset.day,t.dataset.idx);}});
   scClose.addEventListener("click",closeModal);
   overlay.addEventListener("click",e=>{if(e.target===overlay)closeModal();});
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&overlay.classList.contains("open"))closeModal();});

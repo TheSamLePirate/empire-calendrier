@@ -10,6 +10,7 @@
     "Ymir": ["ymir.jpeg"],
     "Lalie": ["lalie.jpeg"],
     "Empire Contre-Intox": ["Logo-ECI.jpg"],
+    "Prehistoric Man": ["prehistoric-man.jpeg"],
     "Jorge": ["jorge.jpeg"],
     "SamLePirate": ["samlepirate.jpeg"],
     "Zalex Astro": ["zalex.astro.jpeg"]
@@ -25,10 +26,20 @@
         "8":  { "time": "22H00", "title": "Ascèse Live" },
         "10": { "time": "22H00", "title": "Harcèlement · Cyber-Harcèlement · Emprise Psy", "host": "Empire Contre-Intox" },
         "11": { "time": "22H00", "title": "Ascèse Live" },
-        "13": { "time": "22H00", "title": "Quizzes Jeux", "host": "Ymir&Lalie" },
+        "13": [
+          { "time": "21H00", "title": "Réaction critique", "host": "Prehistoric Man",
+            "note": "Réaction critique du deuxième épisode de la série The Dinausaurs." },
+          { "time": "22H00", "title": "Quizzes Jeux", "host": "Ymir&Lalie" }
+        ],
         "14": { "time": "16H00", "title": "Les Premières Cités", "host": "Ymir&Lalie" },
+        "20": { "time": "21H00", "title": "Décryptage d'articles scientifiques — session 3", "host": "Prehistoric Man",
+                "note": "Live 3ᵉ session de décryptage d'articles scientifiques." },
         "21": { "time": "16H00", "title": "Les Premiers Empires", "host": "Ymir&Lalie" },
-        "27": { "time": "22H00", "title": "Quizzes Jeux", "host": "Ymir&Lalie" },
+        "27": [
+          { "time": "21H00", "title": "Paléontologie des vertébrés", "host": "Prehistoric Man",
+            "note": "Live visionnage du premier épisode du cours de paléontologie des vertébrés de « Entracte Science » (YouTube)." },
+          { "time": "22H00", "title": "Quizzes Jeux", "host": "Ymir&Lalie" }
+        ],
         "28": { "time": "15H00", "title": "Egypte Versus Grèce", "host": "Ymir&Lalie" }
       }
     },

@@ -37,6 +37,7 @@ Pas de framework, pas de build, pas de dépendance npm. **N'introduis aucun outi
   "months": {
     "AAAA-MM": {
       "events": {
+        // valeur = un objet (1 live) OU un tableau d'objets (plusieurs lives le même jour)
         "<jour>": {                    // jour = "1".."31" (chaîne)
           "time":  "22H00",            // requis — heure affichée telle quelle
           "title": "…",                // requis
@@ -61,6 +62,9 @@ Le moteur de `index.html` calcule tout seul, à partir de la clé `"AAAA-MM"` :
 - Le **marqueur « Aujourd'hui »** si le mois affiché contient la date réelle.
 - Les **glyphes** des jours libres (palette `GLYPH_POOL`, choix déterministe par jour).
 - L'**avatar** d'un live : champ `avatar` explicite, sinon `hosts[host]`, sinon `hosts[title]`.
+- La **mise en page** s'adapte au contenu : 1 live = grand format ; plusieurs = liste compacte
+  (heures en haut, empilées) ; les titres longs rétrécissent (`sizeCls`) et sont tronqués
+  proprement (le texte complet reste dans la modale).
 - La **navigation ‹ ›** : dérivée des clés de `months` triées ; flèche grisée s'il n'y a pas de voisin.
 - Le **mois par défaut** (`defaultMonth: "auto"`) : mois courant s'il existe, sinon le mois
   passé le plus récent, sinon le dernier. `?m=AAAA-MM` dans l'URL force un mois.

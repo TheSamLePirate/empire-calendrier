@@ -98,6 +98,18 @@ Ajoutez une entrée dans le bon mois, indexée par le **numéro du jour** :
 
 Les jours sans événement reçoivent automatiquement un glyphe alchimique discret.
 
+#### Plusieurs lives le même jour
+
+Mettez un **tableau** d'événements à la place d'un seul objet — ils s'affichent
+empilés (du plus tôt au plus tard), chacun cliquable :
+
+```json
+"13": [
+  { "time": "21H00", "title": "Réaction critique", "host": "Prehistoric Man" },
+  { "time": "22H00", "title": "Quizzes Jeux", "host": "Ymir&Lalie" }
+]
+```
+
 ### Créer un nouveau mois
 
 Ajoutez simplement une clé `"AAAA-MM"` dans `months`. **Rien d'autre.**
