@@ -55,13 +55,33 @@ Tout se passe dans **`data/events.json`**.
 | `brand` | racine | non | Nom de la chaîne (kicker + pied de page) |
 | `motto` / `submotto` | racine | non | Devises affichées dans le pied de page |
 | `defaultMonth` | racine | non | `"auto"` (recommandé) ou une clé `"AAAA-MM"` à ouvrir par défaut |
+| `hosts` | racine | non | Avatars des organisateurs : `"nom" → ["image1", "image2"]` |
 | `months` | racine | **oui** | Dictionnaire des mois, clé au format `"AAAA-MM"` |
 | `events` | mois | **oui** | Dictionnaire `"jour" → événement` (jour = `"1"`…`"31"`) |
 | `time` | événement | **oui** | Heure affichée, ex. `"22H00"`, `"21H30"` |
 | `title` | événement | **oui** | Titre du live |
-| `host` | événement | non | Animateur / chaîne invitée |
+| `host` | événement | non | Animateur / chaîne invitée (sert aussi à choisir l'avatar) |
+| `avatar` | événement | non | Avatar(s) forcé(s) pour ce live (sinon déduits du `host`, puis du `title`) |
 | `note` | événement | non | Texte personnalisé dans la fenêtre de détails |
 | `url` | événement | non | Lien → ajoute un bouton « Rejoindre le live » |
+
+### Avatars des organisateurs
+
+Le bloc `hosts` associe un nom à une ou plusieurs images (placées à la racine du dépôt).
+L'avatar s'affiche dans la case et dans la fenêtre de détails. Plusieurs images se
+superposent légèrement (ex. `Ymir&Lalie`).
+
+```json
+"hosts": {
+  "Ascèse Live":         ["Ascese.jpeg"],
+  "Provoxys":            ["provoxys.jpeg"],
+  "Ymir&Lalie":          ["ymir.jpeg", "lalie.jpeg"],
+  "Empire Contre-Intox": ["Logo-ECI.jpg"]
+}
+```
+
+Pour chaque événement, l'avatar est choisi dans l'ordre : champ `avatar` explicite →
+sinon `hosts[host]` → sinon `hosts[title]` (pratique pour « Ascèse Live » qui n'a pas de `host`).
 
 ### Ajouter / modifier un événement
 

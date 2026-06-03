@@ -30,13 +30,18 @@ Pas de framework, pas de build, pas de dépendance npm. **N'introduis aucun outi
   "motto": "Veritas Omnia Vincit",     // pied de page (optionnel)
   "submotto": "Science · Prière · …",  // pied de page (optionnel)
   "defaultMonth": "auto",              // "auto" ou clé "AAAA-MM"
+  "hosts": {                           // avatars des organisateurs (optionnel)
+    "Ymir&Lalie": ["ymir.jpeg", "lalie.jpeg"],   // plusieurs = portraits superposés
+    "Provoxys":   ["provoxys.jpeg"]
+  },
   "months": {
     "AAAA-MM": {
       "events": {
         "<jour>": {                    // jour = "1".."31" (chaîne)
           "time":  "22H00",            // requis — heure affichée telle quelle
           "title": "…",                // requis
-          "host":  "…",                // optionnel — animateur/chaîne
+          "host":  "…",                // optionnel — animateur/chaîne (sert aussi à l'avatar)
+          "avatar": ["x.jpeg"],        // optionnel — force l'avatar (sinon via host puis title)
           "note":  "…",                // optionnel — remplace le texte de la modale
           "url":   "https://…"         // optionnel — bouton « Rejoindre le live »
         }
@@ -55,6 +60,7 @@ Le moteur de `index.html` calcule tout seul, à partir de la clé `"AAAA-MM"` :
   jours du mois, et nombre de lignes (`--rows`, 5 ou 6) — la grille remplit l'écran.
 - Le **marqueur « Aujourd'hui »** si le mois affiché contient la date réelle.
 - Les **glyphes** des jours libres (palette `GLYPH_POOL`, choix déterministe par jour).
+- L'**avatar** d'un live : champ `avatar` explicite, sinon `hosts[host]`, sinon `hosts[title]`.
 - La **navigation ‹ ›** : dérivée des clés de `months` triées ; flèche grisée s'il n'y a pas de voisin.
 - Le **mois par défaut** (`defaultMonth: "auto"`) : mois courant s'il existe, sinon le mois
   passé le plus récent, sinon le dernier. `?m=AAAA-MM` dans l'URL force un mois.

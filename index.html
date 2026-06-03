@@ -271,6 +271,13 @@
   .cell.has-event:hover .seal-time{color:#fff5d8}
 
   .cell .ev{margin-top:auto;display:flex;flex-direction:column;gap:.1em;text-align:center;padding-bottom:2px;z-index:2}
+  .ev-avatars{display:flex;justify-content:center;align-items:center;margin:0 auto .3em}
+  .ev-avatars .avatar{width:clamp(24px,3.6vmin,40px);height:clamp(24px,3.6vmin,40px);border-radius:50%;
+    object-fit:cover;border:1px solid var(--gold-soft);background:#0a262b;
+    box-shadow:0 1px 4px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.3);
+    transition:border-color .3s ease,transform .3s ease}
+  .ev-avatars .avatar+.avatar{margin-left:-11px}
+  .cell.has-event:hover .ev-avatars .avatar{border-color:var(--gold-bright);transform:translateY(-1px)}
   .cell .ev .title{font-family:"Cormorant Garamond",serif;font-weight:700;
     font-size:clamp(.98rem,2.15vmin,1.55rem);line-height:1.08;color:var(--cream);
     text-shadow:0 1px 3px var(--ink-shadow);text-wrap:balance;
@@ -351,6 +358,10 @@
     font-size:clamp(1.5rem,5vmin,2.2rem);
     background:linear-gradient(180deg,#fbeec2,#dcbb62 60%,#9a7830);-webkit-background-clip:text;background-clip:text;color:transparent}
   .sc-host{font-style:italic;color:var(--gold);margin-top:.4em;font-size:1.1rem}
+  .sc-avatars{display:flex;justify-content:center;align-items:center;margin-top:14px}
+  .sc-avatars img{width:58px;height:58px;border-radius:50%;object-fit:cover;background:#0a262b;
+    border:2px solid var(--gold-soft);box-shadow:0 3px 9px rgba(0,0,0,.55)}
+  .sc-avatars img+img{margin-left:-15px}
   .sc-divider{display:flex;align-items:center;gap:8px;margin:16px auto;max-width:200px;color:var(--gold-soft)}
   .sc-divider .l{height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--gold))}
   .sc-divider .l.r{background:linear-gradient(90deg,var(--gold),transparent)}
@@ -533,6 +544,7 @@
       <div class="sc-seal" id="sc-seal"></div>
       <div class="sc-title" id="sc-title"></div>
       <div class="sc-host" id="sc-host"></div>
+      <div class="sc-avatars" id="sc-avatars"></div>
       <div class="sc-divider"><span class="l"></span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0 L15 9 L24 12 L15 15 L12 24 L9 15 L0 12 L9 9 Z"/></svg>
         <span class="l r"></span></div>
@@ -558,7 +570,17 @@
 
   const grid=document.getElementById("grid");
   const overlay=document.getElementById("overlay"),scClose=document.getElementById("sc-close");
-  const state={events:{},year:2026,month:6,monthName:"",brand:"L'Empire Contre-Intox"};
+  const state={events:{},hosts:{},year:2026,month:6,monthName:"",brand:"L'Empire Contre-Intox"};
+
+  // Avatars d'un événement : champ "avatar" explicite, sinon via le host, sinon via le titre.
+  function avatarsFor(ev){
+    if(ev.avatar)return [].concat(ev.avatar);
+    const reg=state.hosts||{};
+    if(ev.host&&reg[ev.host])return reg[ev.host];
+    if(reg[ev.title])return reg[ev.title];
+    return [];
+  }
+  const avatarsHtml=(avs,cls)=>avs.map(a=>`<img class="${cls}" src="${esc(a)}" alt="" loading="lazy">`).join("");
 
   // ---------- Compass ticks (décor du sceau) ----------
   (function(){
@@ -600,8 +622,10 @@
         cell.classList.add("has-event");cell.dataset.day=day;
         cell.tabIndex=0;cell.setAttribute("role","button");
         cell.setAttribute("aria-label",`${day} ${DOW_FULL[dow]} — ${ev.time} — ${ev.title}${ev.host?" ("+ev.host+")":""}. Ouvrir les détails.`);
+        const avs=avatarsFor(ev);
+        const avBlock=avs.length?`<span class="ev-avatars">${avatarsHtml(avs,"avatar")}</span>`:``;
         html+=`<span class="seal-time">${esc(ev.time)}</span>`;
-        html+=`<span class="ev"><span class="title">${esc(ev.title)}</span>`+(ev.host?`<span class="host">${esc(ev.host)}</span>`:``)+`</span>`;
+        html+=`<span class="ev">${avBlock}<span class="title">${esc(ev.title)}</span>`+(ev.host?`<span class="host">${esc(ev.host)}</span>`:``)+`</span>`;
       }else{
         cell.setAttribute("aria-label",`${day} ${DOW_FULL[dow]} — aucun programme`);
         html+=`<span class="glyph">${GLYPH_POOL[(day*7+month*3)%GLYPH_POOL.length]}</span>`;
@@ -635,6 +659,9 @@
     document.getElementById("sc-title").textContent=ev.title;
     const host=document.getElementById("sc-host");
     host.textContent=ev.host?("avec "+ev.host):"";host.style.display=ev.host?"":"none";
+    const avWrap=document.getElementById("sc-avatars");
+    const avs=avatarsFor(ev);
+    avWrap.innerHTML=avatarsHtml(avs,"");avWrap.style.display=avs.length?"":"none";
     const noteHtml=ev.note
       ? esc(ev.note)
       : `Diffusion en direct à <strong style="color:var(--gold-bright)">${esc(ev.time).replace("H"," h ")}</strong>.<br>Rejoignez ${esc(state.brand)} pour ce rendez-vous.`;
@@ -670,6 +697,7 @@
       if(!res.ok)throw new Error("HTTP "+res.status);
       const data=await res.json();
       state.brand=data.brand||state.brand;
+      state.hosts=data.hosts||{};
       if(data.brand)document.getElementById("kicker-brand").textContent=data.brand;
       if(data.motto)document.getElementById("brand-motto").textContent=data.motto;
       if(data.submotto)document.getElementById("brand-sub").textContent=data.submotto;

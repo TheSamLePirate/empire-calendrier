@@ -3,6 +3,17 @@
   "motto": "Veritas Omnia Vincit",
   "submotto": "Science · Prière · Ad Astra Per Aspera",
   "defaultMonth": "auto",
+  "hosts": {
+    "Ascèse Live": ["Ascese.jpeg"],
+    "Provoxys": ["provoxys.jpeg"],
+    "Ymir&Lalie": ["ymir.jpeg", "lalie.jpeg"],
+    "Ymir": ["ymir.jpeg"],
+    "Lalie": ["lalie.jpeg"],
+    "Empire Contre-Intox": ["Logo-ECI.jpg"],
+    "Jorge": ["jorge.jpeg"],
+    "SamLePirate": ["samlepirate.jpeg"],
+    "Zalex Astro": ["zalex.astro.jpeg"]
+  },
   "months": {
     "2026-06": {
       "events": {
