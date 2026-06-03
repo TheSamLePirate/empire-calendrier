@@ -221,6 +221,9 @@
     transition:background .25s,transform .25s,box-shadow .25s}
   .navbtn:hover{background:rgba(67,168,157,.28);box-shadow:0 0 0 1px var(--gold) inset;transform:translateY(-1px)}
   .navbtn[aria-disabled="true"]{opacity:.22;pointer-events:none}
+  .navbtn-home{border-color:var(--gold);color:var(--gold-bright);
+    font-size:clamp(1.05rem,2.4vmin,1.5rem);box-shadow:0 0 0 1px rgba(199,161,75,.25)}
+  .navbtn-home:hover{background:rgba(199,161,75,.22)}
   .laurel{width:clamp(46px,6.4vmin,92px);height:auto;color:var(--gold-bright);flex:0 0 auto;
     filter:drop-shadow(0 1px 2px rgba(0,0,0,.5));animation:fadeDown 1.2s .25s ease both}
   .laurel.right{transform:scaleX(-1)}
@@ -520,6 +523,7 @@
       <div class="stage">
         <header class="cal-head">
           <div class="titlewrap">
+            <a class="navbtn navbtn-home" href="https://thesamlepirate.github.io/empire-contre-intox/" target="_blank" rel="noopener" aria-label="Accueil Empire Contre-Intox" title="Accueil ECI">⌂</a>
             <a class="navbtn" id="nav-prev" href="#" aria-label="Mois précédent" aria-disabled="true">‹</a>
             <svg class="laurel" viewBox="0 0 120 96" aria-hidden="true">
               <defs><g id="leaf"><path d="M0 0 C5 -7 17 -7 23 0 C17 7 5 7 0 0 Z"/></g></defs>
