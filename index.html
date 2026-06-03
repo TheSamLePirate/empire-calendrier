@@ -615,6 +615,7 @@
   //  Calendrier piloté par data/events.json — voir README.md / CLAUDE.md
   // ===================================================================
   const DATA_URL="data/events.json";
+  const OG=new URLSearchParams(location.search).has("og"); // mode aperçu social : rendu propre (sans horloge ni poussière)
   const MONTHS_FR=["Janvier","Février","Mars","Avril","Mai","Juin","Juillet",
                    "Août","Septembre","Octobre","Novembre","Décembre"];
   const DOW_FULL=["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
@@ -807,7 +808,8 @@
     const time=d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
     clockT.textContent=date.charAt(0).toUpperCase()+date.slice(1)+" · "+time;
   }
-  tick();setInterval(tick,1000);
+  if(OG){const c=document.getElementById("clock");if(c)c.style.visibility="hidden";}
+  else{tick();setInterval(tick,1000);}
 
   // ---------- Parallax sur le sceau ----------
   const seal=document.getElementById("seal");
@@ -820,7 +822,7 @@
 
   // ---------- Poussière d'or (canvas) ----------
   (function(){
-    if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+    if(OG||matchMedia("(prefers-reduced-motion:reduce)").matches)return;
     const cv=document.getElementById("motes"),ctx=cv.getContext("2d");
     let w,h,parts;
     function resize(){w=cv.width=innerWidth;h=cv.height=innerHeight;

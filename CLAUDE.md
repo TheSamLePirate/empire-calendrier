@@ -19,7 +19,11 @@ Pas de framework, pas de build, pas de dépendance npm. **N'introduis aucun outi
 | `data/events.json` | **Source de vérité du contenu** (mois + événements + branding) | **Oui** — pour tout changement de contenu |
 | `index.html` | App complète : CSS + moteur JS qui lit le JSON et rend la grille | Seulement pour le design / comportement |
 | `background.png` | Texture de fond de la carte | Rarement |
-| `Logo-ECI.jpg` | Sceau central + médaillon pied de page | Rarement |
+| `Logo-ECI.jpg` | Sceau central + médaillon + favicon | Rarement |
+| `*.jpeg` (ymir, lalie, …) | Avatars des organisateurs | À l'ajout d'un organisateur |
+| `og-image.png` | Aperçu social (1200×630) | **Non — auto-régénéré** par le hook |
+| `scripts/gen-og.sh` | Génère l'aperçu social | Rarement |
+| `.githooks/pre-commit` | Régénère l'aperçu avant chaque commit | Rarement |
 | `README.md` | Doc utilisateur | Si le modèle de données change |
 
 ## Modèle de données (`data/events.json`)
@@ -103,22 +107,35 @@ CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
   --screenshot=preview.png "http://localhost:8000/?m=2026-07"
 ```
 
-## Aperçu social (og-image.png)
+## Aperçu social (og-image.png) — RÉGÉNÉRÉ AVANT CHAQUE PUSH
 
 `index.html` référence `og-image.png` (1200×630) comme image de partage (Open Graph /
-Twitter). C'est un **rendu figé** du calendrier — à régénérer si le design change beaucoup :
+Twitter). C'est un **rendu du calendrier** : il doit toujours refléter le contenu déployé.
 
+⚠️ **Règle : l'aperçu social est régénéré avant chaque push.** C'est **automatisé** par un
+hook git **pre-commit** (`.githooks/pre-commit`) : dès qu'un fichier visuel
+(`index.html`, `data/**`, avatars, `background.png`, `Logo-ECI.jpg`) est en staging, le hook
+exécute `scripts/gen-og.sh`, régénère l'image et l'ajoute au commit. Chaque commit — donc
+chaque push — embarque ainsi un aperçu à jour.
+
+> Pourquoi pre-commit et pas pre-push : la révision poussée est figée au moment du
+> `git push`. Un hook pre-push ne pourrait pas faire entrer la nouvelle image dans le même
+> envoi. On régénère donc au commit, ce que le push transporte ensuite.
+
+**Activation (une fois par clone) :**
 ```bash
-python3 -m http.server 8000 &
-CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-"$CHROME" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=2 \
-  --window-size=1200,630 --virtual-time-budget=6000 --screenshot=/tmp/og_raw.png \
-  "http://localhost:8000/index.html"
-python3 -c "from PIL import Image; Image.open('/tmp/og_raw.png').convert('RGB').resize((1200,630)).save('og-image.png',optimize=True)"
+git config core.hooksPath .githooks
 ```
 
-Incrémente `?v=N` sur les balises `og:image`/`twitter:image` pour forcer les réseaux à
-recharger l'aperçu (ils le mettent en cache agressivement).
+**Régénérer à la main si besoin :**
+```bash
+bash scripts/gen-og.sh
+```
+
+`gen-og.sh` rend le mode **`?og=1`** (sans horloge ni poussière → carte nette et stable),
+via un serveur local (file:// ne charge pas le JSON) + Google Chrome (`$CHROME`). Sans Chrome,
+l'étape est ignorée sans bloquer le commit. Pense à incrémenter `?v=N` sur les balises
+`og:image`/`twitter:image` de `index.html` pour forcer les réseaux à recharger l'aperçu.
 
 ## Déployer
 
@@ -127,6 +144,9 @@ GitHub Pages se met à jour à chaque push sur `main` (~1 min) :
 ```bash
 git add -A && git commit -m "…" && git push
 ```
+
+Au `commit`, le hook `pre-commit` régénère `og-image.png` si un fichier visuel a changé
+(vérifie d'abord `git config core.hooksPath` = `.githooks`).
 
 Compte GitHub actif : **TheSamLePirate** (`gh auth status`). URL :
 https://thesamlepirate.github.io/empire-calendrier/
@@ -141,3 +161,5 @@ https://thesamlepirate.github.io/empire-calendrier/
   filigranes) doivent rester **discrets** (faibles opacités). Ne pas les rendre criards.
 - Lundi est la première colonne (semaine FR). Ne pas repasser en dimanche-first.
 - Pas de build/framework : rester en HTML/CSS/JS statique et autonome.
+- **Aperçu social régénéré avant chaque push** via le hook `pre-commit` (activer une fois :
+  `git config core.hooksPath .githooks`). Le mode `?og=1` produit la carte propre.

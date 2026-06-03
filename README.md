@@ -18,10 +18,19 @@ empire-calendrier/
 ├── data/
 │   └── events.json     ← ★ LE SEUL FICHIER À ÉDITER pour le contenu
 ├── background.png      ← texture de fond (carte patinée)
-├── Logo-ECI.jpg        ← emblème (sceau central + médaillon du pied de page)
+├── Logo-ECI.jpg        ← emblème (sceau central + médaillon + favicon)
+├── *.jpeg              ← avatars des organisateurs (ymir, lalie, provoxys, …)
+├── og-image.png        ← aperçu social (auto-régénéré, ne pas éditer à la main)
+├── scripts/gen-og.sh   ← génère l'aperçu social
+├── .githooks/pre-commit← régénère l'aperçu avant chaque commit
 ├── README.md
 └── CLAUDE.md           ← guide de maintenance pour l'agent / les contributeurs
 ```
+
+> **Première utilisation après un clone :** activez le hook qui tient l'aperçu social à jour :
+> ```bash
+> git config core.hooksPath .githooks
+> ```
 
 Tout est statique : pas de build, pas de dépendance. GitHub Pages sert les fichiers tels quels.
 
@@ -145,6 +154,14 @@ python3 -m http.server 8000
 
 ---
 
+## 🖼️ Aperçu social (image de partage)
+
+Quand le lien est partagé (Discord, X, WhatsApp…), c'est un **rendu du calendrier**
+(`og-image.png`) qui s'affiche. Cette image est **régénérée automatiquement avant chaque
+push** : un hook git `pre-commit` la reconstruit dès qu'un fichier visuel change et l'ajoute
+au commit — vous n'avez rien à faire (pensez juste à activer le hook une fois après le clone,
+voir plus haut). Régénération manuelle si besoin : `bash scripts/gen-og.sh`.
+
 ## 🚀 Déploiement
 
 Le site est publié via **GitHub Pages** (branche `main`, racine `/`).
@@ -152,7 +169,7 @@ Toute modification poussée sur `main` est redéployée automatiquement (~1 min)
 
 ```bash
 git add data/events.json
-git commit -m "Calendrier : ajout des lives de juillet"
+git commit -m "Calendrier : ajout des lives de juillet"   # le hook régénère og-image.png
 git push
 ```
 

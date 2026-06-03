@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Régénère l'aperçu social (og-image.png) et l'ajoute au commit dès qu'un fichier
+# visuel change. Ainsi chaque push embarque un rendu social à jour.
+# Activation : git config core.hooksPath .githooks
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+staged="$(git diff --cached --name-only)"
+
+# Ne rien faire si aucun fichier impactant le rendu n'est en staging.
+if ! printf '%s\n' "$staged" | grep -Eq '^(index\.html|data/.*|background\.png|Logo-ECI\.jpg|.*\.jpe?g|.*\.png)$'; then
+  exit 0
+fi
+
+# Éviter la boucle : si SEUL og-image.png est mis en scène, on ne régénère pas.
+if [ "$staged" = "og-image.png" ]; then
+  exit 0
+fi
+
+echo "[pre-commit] régénération de l'aperçu social og-image.png…"
+if bash "$ROOT/scripts/gen-og.sh"; then
+  git add og-image.png
+  echo "[pre-commit] og-image.png à jour, ajouté au commit."
+else
+  echo "[pre-commit] génération échouée — commit poursuivi sans régénération." >&2
+fi
+exit 0
