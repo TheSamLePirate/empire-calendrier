@@ -1,0 +1,6 @@
+# Aperçus / captures régénérables
+render*.png
+preview*.png
+
+# OS / divers
+.DS_Store

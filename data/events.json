@@ -1,0 +1,28 @@
+{
+  "brand": "L'Empire Contre-Intox",
+  "motto": "Veritas Omnia Vincit",
+  "submotto": "Science · Prière · Ad Astra Per Aspera",
+  "defaultMonth": "auto",
+  "months": {
+    "2026-06": {
+      "events": {
+        "1":  { "time": "22H00", "title": "Ascèse Live" },
+        "4":  { "time": "22H00", "title": "Ascèse Live" },
+        "5":  { "time": "22H00", "title": "Les Sciences", "host": "Provoxys" },
+        "6":  { "time": "21H30", "title": "Les Résistants", "host": "Ymir&Lalie" },
+        "7":  { "time": "16H00", "title": "Sociétés humaines Origins", "host": "Ymir&Lalie" },
+        "8":  { "time": "22H00", "title": "Ascèse Live" },
+        "10": { "time": "22H00", "title": "Harcèlement · Cyber-Harcèlement · Emprise Psy", "host": "Empire Contre-Intox" },
+        "11": { "time": "22H00", "title": "Ascèse Live" },
+        "13": { "time": "22H00", "title": "Quizzes Jeux", "host": "Ymir&Lalie" },
+        "14": { "time": "16H00", "title": "Les Premières Cités", "host": "Ymir&Lalie" },
+        "21": { "time": "16H00", "title": "Les Premiers Empires", "host": "Ymir&Lalie" },
+        "27": { "time": "22H00", "title": "Quizzes Jeux", "host": "Ymir&Lalie" },
+        "28": { "time": "15H00", "title": "Egypte Versus Grèce", "host": "Ymir&Lalie" }
+      }
+    },
+    "2026-07": {
+      "events": {}
+    }
+  }
+}
