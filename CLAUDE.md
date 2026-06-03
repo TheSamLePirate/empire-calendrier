@@ -103,6 +103,23 @@ CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
   --screenshot=preview.png "http://localhost:8000/?m=2026-07"
 ```
 
+## Aperçu social (og-image.png)
+
+`index.html` référence `og-image.png` (1200×630) comme image de partage (Open Graph /
+Twitter). C'est un **rendu figé** du calendrier — à régénérer si le design change beaucoup :
+
+```bash
+python3 -m http.server 8000 &
+CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+"$CHROME" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=2 \
+  --window-size=1200,630 --virtual-time-budget=6000 --screenshot=/tmp/og_raw.png \
+  "http://localhost:8000/index.html"
+python3 -c "from PIL import Image; Image.open('/tmp/og_raw.png').convert('RGB').resize((1200,630)).save('og-image.png',optimize=True)"
+```
+
+Incrémente `?v=N` sur les balises `og:image`/`twitter:image` pour forcer les réseaux à
+recharger l'aperçu (ils le mettent en cache agressivement).
+
 ## Déployer
 
 GitHub Pages se met à jour à chaque push sur `main` (~1 min) :
