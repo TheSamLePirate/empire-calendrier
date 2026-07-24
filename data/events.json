@@ -50,7 +50,8 @@
         "15": { "time": "22H00", "title": "L'Évolution — fin des idées reçues", "host": "Ymir&Lalie" },
         "16": { "time": "21H00-22H00", "title": "Ascèse Live", "note": "Début du live Ascèse. Retrouvez son site : ascese.net." },
         "17": { "time": "22H00", "title": "Sondes, satellites, télescopes — partie 3", "host": "Provoxys", "note": "Avec Provoxys et Sam." },
-        "19": { "time": "16H00", "title": "Les Pirates", "host": "Ymir&Lalie", "note": "Avec Ymir, Phantom et Lalie." }
+        "19": { "time": "16H00", "title": "Les Pirates", "host": "Ymir&Lalie", "note": "Avec Ymir, Phantom et Lalie." },
+        "24": { "time": "22H00", "title": "L'Entropie", "host": "Provoxys" }
       }
     }
   }
