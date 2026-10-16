@@ -12,11 +12,19 @@ sceau central (le logo + anneau de boussole), typographies Cinzel / Cormorant Ga
 
 Pas de framework, pas de build, pas de dépendance npm. **N'introduis aucun outil de build.**
 
+## Gestion collaborative (Portainer)
+
+Le frontal reste sans framework ni build. Le service `../calendar-service/` du dépôt parent assure comptes, sessions, API, SQLite et portraits persistants. Tous les utilisateurs connectés modifient tout le contenu ; seuls les administrateurs gèrent les comptes. Animateurs et comptes sont distincts.
+
+**Après le premier import, SQLite est la source de vérité en production.** `data/events.json` reste une amorce de base neuve et le repli du mode statique local. Ne pas réimporter automatiquement au redémarrage. Le miroir lit l’API publique sans credentials ; l’admin redirige vers le domaine principal. Une panne de production ne doit jamais afficher silencieusement le JSON ancien.
+
+`admin/index.html`, `admin/admin.css` et `admin/admin.js` sont autonomes et copiés explicitement dans l’image Nginx. Pour les contrôles et opérations serveur, lire `../calendar-service/README.md`. Ce dépôt calendrier conserve sa propre histoire Git : les changements ne sont pas suivis dans le dépôt parent.
+
 ## Carte des fichiers
 
 | Fichier | Rôle | Faut-il l'éditer ? |
 |---------|------|--------------------|
-| `data/events.json` | **Source de vérité du contenu** (mois + événements + branding) | **Oui** — pour tout changement de contenu |
+| `data/events.json` | **Amorce** (base neuve / mode statique local) | **Oui** — pour tout changement de contenu |
 | `index.html` | App complète : CSS + moteur JS qui lit le JSON et rend la grille | Seulement pour le design / comportement |
 | `background.png` | Texture de fond de la carte | Rarement |
 | `Logo-ECI.jpg` | Sceau central + médaillon + favicon | Rarement |

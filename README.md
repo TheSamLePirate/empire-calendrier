@@ -5,8 +5,9 @@ impériale (parchemin patiné teal & or, cadre ouvragé, sceau central).
 
 **🔗 En ligne :** https://thesamlepirate.github.io/empire-calendrier/
 
-Le calendrier est **entièrement piloté par un fichier JSON** : aucune ligne de code à
-toucher pour mettre à jour les événements ou ajouter un nouveau mois.
+Le calendrier peut être modifié depuis **[l’espace de gestion](https://empire-contre-intox.com/empire-calendrier/admin/)** avec un compte du collectif : événements, création d’animateurs, bibliothèque d’avatars et import avec recadrage. Tous les membres peuvent modifier tout le contenu ; seuls les administrateurs gèrent les comptes.
+
+Sur Portainer, le service calendrier du dépôt parent conserve les données dans SQLite et les portraits dans un volume persistant. Le fichier `data/events.json` sert à l’import initial et au fonctionnement statique local ; il n’est plus la source de vérité une fois la base initialisée. Le miroir lit la même API publique. Voir `../calendar-service/README.md` dans l’espace de travail pour les opérations serveur.
 
 ---
 
@@ -32,13 +33,15 @@ empire-calendrier/
 > git config core.hooksPath .githooks
 > ```
 
-Tout est statique : pas de build, pas de dépendance. GitHub Pages sert les fichiers tels quels.
+Le frontal reste statique : aucun framework, aucun build et aucune dépendance npm. GitHub Pages sert les fichiers tels quels ; le JavaScript lit les données actuelles sur l’API publique du domaine principal. L’administration redirige vers ce domaine.
 
 ---
 
 ## ✏️ Mettre à jour le calendrier
 
-Tout se passe dans **`data/events.json`**.
+En production, utiliser l’espace de gestion : les changements sont publiés au prochain chargement, sans redéploiement.
+
+Les instructions JSON ci-dessous concernent **l’amorce d’une base neuve ou le mode statique local**. Modifier ce fichier ne met pas à jour une base déjà initialisée.
 
 ### Modèle de données
 

@@ -468,6 +468,8 @@
     *{animation-duration:.001ms!important;animation-iteration-count:1!important}
     .cosmos::before,.gear,.seal .ring.spin{animation:none}
   }
+  .cal-manage{color:var(--gold-pale);font-size:.78rem;text-underline-offset:4px;white-space:nowrap}
+  .avatar-initials{display:inline-flex;align-items:center;justify-content:center;background:var(--teal-mid);color:var(--cream);font-family:"Cinzel",serif;font-size:.6rem}
 </style>
 </head>
 <body>
@@ -587,6 +589,7 @@
             <span class="t">—</span>
             <span class="sub" id="clock-sub">L'Empire vous accueille</span>
           </div>
+          <a class="cal-manage" id="manage-calendar" href="admin/">Modifier le calendrier ↗</a>
           <div class="legend">
             <span class="li"><span class="sw ev"></span> Live</span>
             <span class="li"><span class="sw td"></span> Aujourd'hui</span>
@@ -618,7 +621,12 @@
   // ===================================================================
   //  Calendrier piloté par data/events.json — voir README.md / CLAUDE.md
   // ===================================================================
-  const DATA_URL="data/events.json";
+  const PRIMARY_ORIGIN="https://empire-contre-intox.com";
+  const LOCAL=["localhost","127.0.0.1","[::1]"].includes(location.hostname);
+  const MIRROR=location.hostname==="thesamlepirate.github.io";
+  const DATA_URL=MIRROR?PRIMARY_ORIGIN+"/api/calendar/public":"/api/calendar/public";
+  const manageLink=document.getElementById("manage-calendar");
+  if(manageLink&&MIRROR)manageLink.href=PRIMARY_ORIGIN+"/empire-calendrier/admin/";
   const OG=new URLSearchParams(location.search).has("og"); // mode aperçu social : rendu propre (sans horloge ni poussière)
   const MONTHS_FR=["Janvier","Février","Mars","Avril","Mai","Juin","Juillet",
                    "Août","Septembre","Octobre","Novembre","Décembre"];
@@ -642,8 +650,10 @@
     if(reg[ev.title])return reg[ev.title];
     return [];
   }
-  const avatarsHtml=(avs,cls)=>avs.map(a=>`<img class="${cls}" src="${esc(a)}" alt="" loading="lazy">`).join("");
   const escAttr=s=>esc(s).replace(/"/g,"&quot;");
+  function safeUrl(value){try{const u=new URL(value,location.href);return ["https:","http:"].includes(u.protocol)?u.href:"";}catch{return "";}}
+  const avatarsHtml=(avs,cls)=>avs.map(a=>safeUrl(a)).filter(Boolean).map(a=>`<img class="${cls}" src="${escAttr(a)}" alt="" loading="lazy">`).join("");
+  const initialHtml=ev=>`<span class="avatar avatar-initials" aria-hidden="true">${esc((ev.host||ev.title||"ECI").split(/[\s&]+/).filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase())}</span>`;
   // Un jour peut contenir un seul événement (objet) ou plusieurs (tableau).
   const dayList=day=>{const v=state.events[day];return v?[].concat(v):[];};
   // Réduit la taille du titre selon sa longueur (mise en page adaptative).
@@ -662,8 +672,8 @@
   function renderMonth(year,month,events){
     state.year=year;state.month=month;state.events=events||{};
     state.monthName=MONTHS_FR[month-1];
-    const now=new Date();
-    const todayDay=(now.getFullYear()===year&&now.getMonth()===month-1)?now.getDate():null;
+    const parisToday=new Intl.DateTimeFormat("sv-SE",{timeZone:"Europe/Paris",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+    const todayDay=parisToday.startsWith(`${year}-${pad2(month)}-`)?Number(parisToday.slice(8)):null;
 
     const firstDow=(new Date(year,month-1,1).getDay()+6)%7;   // 0 = lundi
     const daysInMonth=new Date(year,month,0).getDate();
@@ -675,6 +685,7 @@
     document.getElementById("month-title").textContent=`${state.monthName} ${year}`;
     document.getElementById("kicker-year").textContent=roman(year);
     document.title=`${state.brand} — Calendrier · ${state.monthName} ${year}`;
+    document.querySelector("main.frame").setAttribute("aria-label",`Calendrier ${state.monthName} ${year} — ${state.brand}`);
 
     for(let i=0;i<total;i++){
       const day=i-firstDow+1, dow=i%7;
@@ -694,7 +705,7 @@
         cell.tabIndex=0;cell.setAttribute("role","button");
         cell.setAttribute("aria-label",`${day} ${DOW_FULL[dow]} — ${ev.time} — ${ev.title}${ev.host?" ("+ev.host+")":""}. Ouvrir les détails.`);
         const avs=avatarsFor(ev);
-        const avBlock=avs.length?`<span class="ev-avatars">${avatarsHtml(avs,"avatar")}</span>`:``;
+        const avBlock=`<span class="ev-avatars">${avs.length?avatarsHtml(avs,"avatar"):initialHtml(ev)}</span>`;
         html+=`<span class="seal-time">${esc(ev.time)}</span>`;
         html+=`<div class="cbody"><span class="ev">${avBlock}<span class="title ${sizeCls(ev.title)}">${esc(ev.title)}</span>`+(ev.host?`<span class="host">${esc(ev.host)}</span>`:``)+`</span></div>`;
       }else{
@@ -703,7 +714,7 @@
         let items="";
         evs.forEach((ev,i)=>{
           const avs=avatarsFor(ev);
-          const avBlock=avs.length?`<span class="ev-avatars mini">${avatarsHtml(avs,"avatar")}</span>`:``;
+          const avBlock=`<span class="ev-avatars mini">${avs.length?avatarsHtml(avs,"avatar"):initialHtml(ev)}</span>`;
           items+=`<div class="ev-item" role="button" tabindex="0" data-day="${day}" data-idx="${i}"`
             +` aria-label="${escAttr(ev.time)} — ${escAttr(ev.title)}${ev.host?" ("+escAttr(ev.host)+")":""}. Ouvrir les détails.">`
             +avBlock
@@ -749,7 +760,8 @@
     const noteHtml=ev.note
       ? esc(ev.note)
       : `Diffusion en direct à <strong style="color:var(--gold-bright)">${esc(ev.time).replace("H"," h ")}</strong>.<br>Rejoignez ${esc(state.brand)} pour ce rendez-vous.`;
-    const linkHtml=ev.url?`<a class="sc-link" href="${esc(ev.url)}" target="_blank" rel="noopener">Rejoindre le live ↗</a>`:"";
+    const link=safeUrl(ev.url||"");
+    const linkHtml=ev.url&&link?`<a class="sc-link" href="${escAttr(link)}" target="_blank" rel="noopener noreferrer">Rejoindre le live ↗</a>`:"";
     document.getElementById("sc-note").innerHTML=noteHtml+linkHtml;
     lastFocus=document.activeElement;
     overlay.classList.add("open");scClose.focus();
@@ -768,7 +780,7 @@
     if(!keys.length)return{keys:[],key:null};
     if(requested&&months[requested])return{keys,key:requested};
     if(defaultMonth&&defaultMonth!=="auto"&&months[defaultMonth])return{keys,key:defaultMonth};
-    const now=new Date(),todayKey=`${now.getFullYear()}-${pad2(now.getMonth()+1)}`;
+    const todayKey=new Intl.DateTimeFormat("sv-SE",{timeZone:"Europe/Paris",year:"numeric",month:"2-digit"}).format(new Date()).slice(0,7);
     if(months[todayKey])return{keys,key:todayKey};
     const past=keys.filter(k=>k<=todayKey);
     return{keys,key:past.length?past[past.length-1]:keys[keys.length-1]};
@@ -777,7 +789,8 @@
   // ---------- Initialisation ----------
   (async function init(){
     try{
-      const res=await fetch(DATA_URL,{cache:"no-cache"});
+      let res=await fetch(DATA_URL,{cache:"no-cache",credentials:"omit"});
+      if(LOCAL&&res.status===404)res=await fetch("data/events.json",{cache:"no-cache"});
       if(!res.ok)throw new Error("HTTP "+res.status);
       const data=await res.json();
       state.brand=data.brand||state.brand;
@@ -797,8 +810,7 @@
       grid.style.setProperty("--rows",1);
       grid.innerHTML=`<div class="cell" style="grid-column:1/-1;text-align:center;justify-content:center;align-items:center;gap:.4em">
         <span class="num" style="font-size:1.2rem">Données indisponibles</span>
-        <span class="ev"><span class="title">Impossible de charger <code>data/events.json</code>.<br>
-        Ouvrez le site via un serveur (ex. <code>python3 -m http.server</code>) — le protocole file:// bloque le chargement JSON.</span></span></div>`;
+        <span class="ev"><span class="title">Le calendrier est temporairement indisponible.<br>Réessayez dans quelques instants en rechargeant la page.</span></span></div>`;
       document.getElementById("month-title").textContent="Calendrier";
       console.error("[calendrier]",err);
     }
@@ -808,8 +820,8 @@
   const clockT=document.querySelector("#clock .t");
   function tick(){
     const d=new Date();
-    const date=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-    const time=d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    const date=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"Europe/Paris"});
+    const time=d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit",second:"2-digit",timeZone:"Europe/Paris"});
     clockT.textContent=date.charAt(0).toUpperCase()+date.slice(1)+" · "+time;
   }
   if(OG){const c=document.getElementById("clock");if(c)c.style.visibility="hidden";}
