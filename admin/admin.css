@@ -895,7 +895,7 @@ dialog::backdrop {
 }
 .upcoming-row {
   display: grid;
-  grid-template-columns: 2.6rem 112px minmax(0, 1fr) auto;
+  grid-template-columns: auto auto 2.6rem 112px minmax(0, 1fr) auto;
   align-items: center;
   gap: 1rem;
   padding: 0.8rem 0.5rem;
@@ -1050,17 +1050,300 @@ dialog::backdrop {
 }
 @media (max-width: 760px) {
   .upcoming-row {
-    grid-template-columns: 2rem 76px minmax(0, 1fr);
+    grid-template-columns: auto auto 76px minmax(0, 1fr);
+    gap: 0.6rem;
+  }
+  .upcoming-row .upcoming-num {
+    display: none;
   }
   .upcoming-thumb {
     width: 76px;
     height: 51px;
   }
   .upcoming-row .row-actions {
-    grid-column: 2 / -1;
+    grid-column: 3 / -1;
+    flex-wrap: wrap;
+  }
+  .upcoming-row.is-trashed {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+  .upcoming-row.is-trashed .row-actions {
+    grid-column: 1 / -1;
   }
   .upcoming-media {
     padding-left: 0;
     border-left: 0;
   }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.upcoming-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.upcoming-notice:empty {
+  display: none;
+}
+.upcoming-undo {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.8rem;
+}
+.upcoming-trash-toggle[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: #e2e9dc;
+  font-weight: bold;
+}
+.upcoming-bulk {
+  position: sticky;
+  top: 0.5rem;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.8rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--sheet);
+  box-shadow: 0 10px 30px #092e3122;
+}
+.upcoming-bulk[hidden] {
+  display: none;
+}
+.upcoming-bulk strong {
+  margin-right: 0.5rem;
+}
+.upcoming-bulk .spacer {
+  flex: 1;
+}
+.upcoming-bulk button {
+  font-size: 0.85rem;
+  padding: 0.45rem 0.8rem;
+}
+.upcoming-check {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  accent-color: var(--accent);
+}
+.upcoming-handle {
+  border: 0;
+  background: transparent;
+  padding: 0.4rem 0.35rem;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--muted);
+  cursor: grab;
+  touch-action: none;
+}
+.upcoming-handle:hover:not(:disabled) {
+  color: var(--ink);
+  background: #e7e0cc;
+}
+.upcoming-handle:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+.upcoming-handle:focus-visible,
+.upcoming-title:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+.upcoming-list.is-sorting {
+  user-select: none;
+  cursor: grabbing;
+}
+.upcoming-list.is-sorting .upcoming-handle {
+  cursor: grabbing;
+}
+.upcoming-row.is-dragging {
+  position: relative;
+  z-index: 2;
+  background: var(--sheet);
+  box-shadow: 0 14px 40px #092e3140;
+  outline: 2px solid var(--accent);
+}
+.upcoming-row.is-selected {
+  background: #e7ecdf;
+}
+.upcoming-row.is-hidden.is-selected {
+  background: repeating-linear-gradient(135deg, #e7ecdf 0 10px, #dfe5d6 10px 20px);
+}
+button.upcoming-title {
+  display: block;
+  margin-top: 0.2rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 1.08rem;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+}
+button.upcoming-title:hover {
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.upcoming-stamp {
+  margin: 0.25rem 0 0;
+  font-family: system-ui, sans-serif;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+.upcoming-row .row-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.upcoming-row.is-trashed {
+  grid-template-columns: 2.6rem 112px minmax(0, 1fr) auto;
+  opacity: 0.92;
+}
+.upcoming-media-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.upcoming-dialog .dialog-head .field-note {
+  margin-top: 0.3rem;
+}
+.upcoming-dialog .form-message button {
+  margin-left: 0.4rem;
+  font-size: 0.85rem;
+  padding: 0.3rem 0.7rem;
+}
+/* Aperçu de la carte publique (reprend la page Prochainement : nuit, or, accent du thème). */
+.upcoming-card-preview {
+  --c: #e0b35c;
+  border: 1px solid rgba(244, 236, 216, 0.12);
+  border-top: 2px solid var(--c);
+  border-radius: 3px;
+  overflow: hidden;
+  background: linear-gradient(160deg, #0e1a2e, #070c1a);
+  color: #f4ecd8;
+  box-shadow: 0 16px 40px #05081155;
+}
+.upcoming-card-preview.theme-cosmos { --c: #7eb6ff; }
+.upcoming-card-preview.theme-terre { --c: #d9895b; }
+.upcoming-card-preview.theme-vivant { --c: #7dbe8a; }
+.upcoming-card-preview.is-hidden {
+  opacity: 0.6;
+}
+.ucp-media {
+  position: relative;
+  aspect-ratio: 640 / 430;
+  background: #050811;
+}
+.ucp-media img,
+.ucp-media video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ucp-num {
+  position: absolute;
+  left: 0.7rem;
+  bottom: 0.4rem;
+  font-size: 2.4rem;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px #f3d98a;
+  text-shadow: 0 2px 16px #000a;
+}
+.ucp-soon {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid #d6ac5580;
+  border-radius: 2px;
+  background: #050811c0;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f3d98a;
+}
+.ucp-body {
+  padding: 0.8rem 1rem 1rem;
+}
+.ucp-kicker {
+  margin: 0;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  color: var(--c);
+}
+.upcoming-card-preview h3 {
+  margin: 0.35rem 0 0;
+  font-size: 1.15rem;
+  font-weight: normal;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.upcoming-card-preview h3.is-placeholder {
+  color: #8f8c78;
+  font-style: italic;
+}
+.ucp-hook {
+  margin: 0.35rem 0 0;
+  font-style: italic;
+  font-size: 0.9rem;
+  color: #f3d98a;
+  overflow-wrap: anywhere;
+}
+.ucp-hook[hidden],
+.ucp-teaser[hidden] {
+  display: none;
+}
+.ucp-teaser {
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  color: #c0b59a;
+}
+.ucp-teaser summary {
+  cursor: pointer;
+  color: #d6ac55;
+}
+.ucp-teaser ul {
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+  max-height: 180px;
+  overflow: auto;
+}
+.upcoming-history {
+  width: min(640px, calc(100% - 24px));
+}
+.upcoming-history-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  max-height: 60vh;
+  overflow: auto;
+}
+.upcoming-history-list li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.upcoming-history-list p {
+  margin: 0;
+}
+.upcoming-history-list button {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
 }
