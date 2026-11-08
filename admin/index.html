@@ -7,9 +7,10 @@
     <meta name="referrer" content="same-origin" />
     <title>Gestion du calendrier — Empire Contre-Intox</title>
     <link rel="icon" href="../Logo-ECI.jpg" />
-    <link rel="stylesheet" href="admin.css?v=83a33002c928" />
-    <script src="admin.js?v=833eb652b105" defer></script>
+    <link rel="stylesheet" href="admin.css?v=99e69a704e8d" />
+    <script src="admin.js?v=ff53e375595e" defer></script>
   <script src="lives-admin.js" defer></script>
+  <script src="upcoming-admin.js" defer></script>
 </head>
   <body>
     <div class="page-grain" aria-hidden="true"></div>
@@ -89,9 +90,10 @@
             Les rendez-vous <span id="event-count"></span></button
           ><button data-tab="hosts">
             Les animateurs <span id="host-count"></span></button
-          ><button data-tab="users" id="users-tab" hidden>Les comptes</button><button data-tab="lives" id="lives-tab" hidden>Lives TikTok</button>
+          ><button data-tab="users" id="users-tab" hidden>Les comptes</button><button data-tab="upcoming" id="upcoming-tab" hidden>Prochainement <span id="upcoming-count"></span></button><button data-tab="lives" id="lives-tab" hidden>Lives TikTok</button>
         </nav>
         <section id="lives-panel" hidden aria-label="Gestion des comptes TikTok"></section>
+        <section id="upcoming-panel" hidden aria-label="Programme Prochainement"></section>
         <section id="events-panel" aria-label="Événements">
           <div class="toolbar">
             <label

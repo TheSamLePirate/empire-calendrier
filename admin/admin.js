@@ -356,7 +356,7 @@
       if (tab.dataset.tab === name) tab.setAttribute("aria-current", "page");
       else tab.removeAttribute("aria-current");
     }
-    for (const name2 of ["events", "hosts", "users", "lives"])
+    for (const name2 of ["events", "hosts", "users", "lives", "upcoming"])
       $(`#${name2}-panel`).hidden = name !== name2;
   }
   function openEvent(event = null) {
